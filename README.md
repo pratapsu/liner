@@ -98,3 +98,6 @@ func main() {
 ```
 
 For documentation, see http://godoc.org/github.com/peterh/liner
+
+ToDo:
+   - add color prompts. 
