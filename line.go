@@ -97,9 +97,18 @@ func (s *State) refresh(prompt []rune, buf []rune, pos int) error {
 	return s.refreshSingleLine(prompt, buf, pos)
 }
 
+func (s *State) Print(p string) (n int, err error) {
+	if s.color != nil {
+		n, err = s.color.Print(p)
+	} else {
+		n, err = fmt.Print(p)
+	}
+	return 
+}
+
 func (s *State) refreshSingleLine(prompt []rune, buf []rune, pos int) error {
 	s.cursorPos(0)
-	_, err := fmt.Print(string(prompt))
+	_, err := s.Print(string(prompt))
 	if err != nil {
 		return err
 	}
@@ -184,7 +193,7 @@ func (s *State) refreshMultiLine(prompt []rune, buf []rune, pos int) error {
 	s.eraseLine()
 
 	/* Write the prompt and the current buffer content */
-	if _, err := fmt.Print(string(prompt)); err != nil {
+	if _, err := s.Print(string(prompt)); err != nil {
 		return err
 	}
 	if _, err := fmt.Print(string(buf)); err != nil {
@@ -584,7 +593,7 @@ func (s *State) PromptWithSuggestion(prompt string, text string, pos int) (strin
 	s.historyMutex.RLock()
 	defer s.historyMutex.RUnlock()
 
-	fmt.Print(prompt)
+	s.Print(prompt)
 	p := []rune(prompt)
 	var line = []rune(text)
 	historyEnd := ""
@@ -748,7 +757,7 @@ mainLoop:
 				}
 				line = line[:0]
 				pos = 0
-				fmt.Print(prompt)
+				s.Print(prompt)
 				s.restartPrompt()
 			case ctrlH, bs: // Backspace
 				if pos <= 0 {
@@ -994,7 +1003,7 @@ restart:
 	s.startPrompt()
 	s.getColumns()
 
-	fmt.Print(prompt)
+	s.Print(prompt)
 	p := []rune(prompt)
 	var line []rune
 	pos := 0
@@ -1051,7 +1060,7 @@ mainLoop:
 				}
 				line = line[:0]
 				pos = 0
-				fmt.Print(prompt)
+				s.Print(prompt)
 				s.restartPrompt()
 			// Unused keys
 			case esc, tab, ctrlA, ctrlB, ctrlE, ctrlF, ctrlG, ctrlK, ctrlN, ctrlO, ctrlP, ctrlQ, ctrlR, ctrlS,

@@ -11,6 +11,7 @@ import (
 	"strings"
 	"syscall"
 	"time"
+	"github.com/fatih/color"
 )
 
 type nexter struct {
@@ -27,6 +28,11 @@ type State struct {
 	winch       chan os.Signal
 	pending     []rune
 	useCHA      bool
+	color       *color.Color
+}
+
+func (s *State) SetColor(c *color.Color) {
+	s.color = c
 }
 
 // NewLiner initializes a new *State, and sets the terminal into raw mode. To
